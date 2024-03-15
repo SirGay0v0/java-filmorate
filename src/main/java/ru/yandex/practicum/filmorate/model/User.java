@@ -1,35 +1,31 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
-import ru.yandex.practicum.filmorate.Validators.ReleaseDateValidator;
+import ru.yandex.practicum.filmorate.Validators.CorrectUser;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.Objects;
 
-/**
- * Film.
- */
 @Data
-public class Film {
+@CorrectUser
+public class User {
     private int id;
     @NotBlank
+    @Pattern(regexp = ".*@.*")
+    private String email;
+    @NotBlank
+    private String login;
     private String name;
-    @Length(max = 200)
-    private String description;
-    @ReleaseDateValidator
-    private LocalDate releaseDate;
-    @Min(1)
-    private Long duration;
+    private LocalDate birthday;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Film film = (Film) o;
-        return id == film.id;
+        User user = (User) o;
+        return id == user.id;
     }
 
     @Override

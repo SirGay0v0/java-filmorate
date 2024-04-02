@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Film.
@@ -23,6 +24,7 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private Long duration;
+    private Set<Long> likesUsersSet;
 
     @Override
     public boolean equals(Object o) {

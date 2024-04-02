@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private final Map<Integer, User> userMap = new ConcurrentHashMap<>();
-    private int id = 1;
+    private final Map<Long, User> userMap = new ConcurrentHashMap<>();
+    private long id = 1;
 
     @Override
     public void create(User user) {

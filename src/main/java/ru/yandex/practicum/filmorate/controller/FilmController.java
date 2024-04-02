@@ -1,37 +1,35 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.Validators.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
 public class FilmController {
 
-    private final Map<Integer, Film> filmMap = new ConcurrentHashMap<>();
-    private int id = 1;
+    @Autowired
+    private InMemoryFilmStorage storage;
 
     @PostMapping("/films")
-    private Film createFilm(@RequestBody @Valid Film film) {
-        film.setId(id);
-        filmMap.put(id, film);
-        id++;
+    private Film createFilm(@Valid Film film) {
+        storage.create(film);
         log.info("Фильм успешно создан");
         return film;
     }
 
     @PutMapping("/films")
-    private Film updateFilm(@RequestBody @Valid Film film) throws ValidationException {
-        if (filmMap.containsKey(film.getId())) {
-            filmMap.remove(film.getId());
-            filmMap.put(film.getId(), film);
+    private Film updateFilm(@Valid Film film) throws ValidationException {
+        if (storage.update(film).equals(film)) {
             log.info("Фильм успешно обновлен");
             return film;
         } else throw new ValidationException("not exist");
@@ -40,8 +38,6 @@ public class FilmController {
     @GetMapping("/films")
     private List<Film> getFilms() {
         log.info("Возвращен список всех фильмов");
-        return filmMap.keySet().stream()
-                .map(filmMap::get)
-                .collect(Collectors.toList());
+        return storage.returnAll();
     }
 }

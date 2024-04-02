@@ -7,11 +7,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Set;
 
 @Data
 @CorrectUser
 public class User {
-    private int id;
+    private long id;
     @NotBlank
     @Pattern(regexp = ".*@.*")
     private String email;
@@ -19,6 +20,7 @@ public class User {
     private String login;
     private String name;
     private LocalDate birthday;
+    private Set<Long> friendsSet;
 
     @Override
     public boolean equals(Object o) {

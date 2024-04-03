@@ -3,8 +3,8 @@ package ru.yandex.practicum.filmorate.storage.user;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -34,10 +34,15 @@ public class InMemoryUserStorage implements UserStorage {
         userMap.remove(user.getId());
     }
 
-    @Override
-    public List<User> returnAll() {
+
+    public Set<User> returnAll() {
         return userMap.keySet().stream()
                 .map(userMap::get)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
+    }
+
+
+    public User getUserById(long id) {
+        return userMap.get(id);
     }
 }

@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.Validators.ReleaseDateValidator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ import java.util.Set;
  */
 @Data
 public class Film {
-    private int id;
+    private long id;
     @NotBlank
     private String name;
     @Length(max = 200)
@@ -24,7 +25,7 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private Long duration;
-    private Set<Long> likesUsersSet;
+    private Set<Long> likesUsersSet = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
@@ -32,6 +33,10 @@ public class Film {
         if (o == null || getClass() != o.getClass()) return false;
         Film film = (Film) o;
         return id == film.id;
+    }
+
+    public int sizeOfLikes() {
+        return likesUsersSet.size();
     }
 
     @Override

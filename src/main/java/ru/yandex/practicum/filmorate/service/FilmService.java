@@ -3,8 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Comparator;
 import java.util.List;
@@ -13,24 +13,32 @@ import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
-    @Autowired
-    private InMemoryFilmStorage storage;
+    private final FilmStorage storage;
     private Set<Long> filmLikesSet;
+    private final UserStorage userStorage;
 
-    private void addLike(User user, Film film) {
-        filmLikesSet = film.getLikesUsersSet();
-        filmLikesSet.add(user.getId());
+    @Autowired
+    public FilmService(FilmStorage storage, UserStorage userStorage) {
+        this.storage = storage;
+        this.userStorage = userStorage;
     }
 
-    private void removeLike(User user, Film film) {
-        filmLikesSet = film.getLikesUsersSet();
-        filmLikesSet.remove(user.getId());
+    public void addLike(long userId, long filmId) {
+        filmLikesSet = storage.getFilmById(filmId).getLikesUsersSet();
+        filmLikesSet.add(userStorage.getUserById(userId).getId());
+        storage.getFilmById(filmId).setLikesUsersSet(filmLikesSet);
     }
 
-    private List<Film> getMostLikableFilmsSet() {
+    public void removeLike(long userId, long filmId) {
+        filmLikesSet = storage.getFilmById(filmId).getLikesUsersSet();
+        filmLikesSet.remove(userStorage.getUserById(userId).getId());
+        storage.getFilmById(filmId).setLikesUsersSet(filmLikesSet);
+    }
+
+    public List<Film> getMostLikableFilmsSet(int count) {
         return storage.returnAll().stream()
-                .sorted(Comparator.comparingInt(film -> film.getLikesUsersSet().size()))
-                .limit(10)
+                .sorted(Comparator.comparing(Film::sizeOfLikes).reversed())
+                .limit(count)
                 .collect(Collectors.toList());
     }
 }

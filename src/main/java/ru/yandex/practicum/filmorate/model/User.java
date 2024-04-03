@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.Validators.CorrectUser;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ public class User {
     private String login;
     private String name;
     private LocalDate birthday;
-    private Set<Long> friendsSet;
+    private Set<Long> friendsSet = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

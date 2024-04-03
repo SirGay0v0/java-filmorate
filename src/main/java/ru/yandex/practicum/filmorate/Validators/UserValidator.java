@@ -17,6 +17,9 @@ public class UserValidator implements ConstraintValidator<CorrectUser, User> {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        return !user.getBirthday().isAfter(LocalDate.now());
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            return false;
+        }
+        return true;
     }
 }

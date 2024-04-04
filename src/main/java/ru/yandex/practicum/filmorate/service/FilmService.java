@@ -8,9 +8,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,12 +33,9 @@ public class FilmService {
 
     }
 
-    public List<Film> getMostLikableFilmsSet(int count) {
+    public List<Film> getMostLikableFilmsList(int count) {
         log.info("Возвращен список из " + count + " фильмов с наибольшем коичеством лайков");
-        return filmStorage.returnAll().stream()
-                .sorted(Comparator.comparing(Film::sizeOfLikes).reversed())
-                .limit(count)
-                .collect(Collectors.toList());
+        return filmStorage.getMostLikableFilmSet(count);
     }
 
     public Film createFilm(Film film) {
@@ -53,10 +48,10 @@ public class FilmService {
         if (filmStorage.update(film).equals(film)) {
             log.info("Фильм c id " + film.getId() + " обновлен");
             return film;
-        } else throw new ValidationException("not exist");
+        } else throw new ValidationException();
     }
 
-    public List<Film> getAllFilms() {
+    public List<Film> getListAllFilms() {
         log.info("Возвращен список всех фильмов");
         return filmStorage.returnAll();
     }

@@ -14,4 +14,6 @@ public interface FilmStorage {
     List<Film> returnAll();
 
     Film getFilmById(long id);
+
+    List<Film> getMostLikableFilmSet(int count);
 }

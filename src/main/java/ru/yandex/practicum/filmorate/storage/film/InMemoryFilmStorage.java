@@ -4,9 +4,11 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
@@ -44,5 +46,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film getFilmById(long id) {
         return filmMap.get(id);
+    }
+
+    @Override
+    public List<Film> getMostLikableFilmSet(int count) {
+        return returnAll().stream()
+                .sorted(Comparator.comparing(Film::sizeOfLikes).reversed())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }

@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
@@ -11,7 +10,6 @@ import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 import javax.validation.Valid;
 import java.util.List;
 
-@Slf4j
 @RestController
 public class FilmController {
 
@@ -35,7 +33,7 @@ public class FilmController {
 
     @GetMapping("/films")
     private List<Film> getFilms() {
-        return service.getAllFilms();
+        return service.getListAllFilms();
     }
 
     @PutMapping("/films/{id}/like/{userId}")
@@ -50,6 +48,6 @@ public class FilmController {
 
     @GetMapping("/films/popular")
     private List<Film> getMostLikableFilms(@RequestParam(defaultValue = "10") String count) {
-        return service.getMostLikableFilmsSet(Integer.parseInt(count));
+        return service.getMostLikableFilmsList(Integer.parseInt(count));
     }
 }

@@ -11,8 +11,7 @@ import java.io.IOException;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler(value
-            = { NotFoundException.class, NullPointerException.class })
+    @ExceptionHandler(value = {NotFoundException.class, NullPointerException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound() {
         return new ErrorResponse(

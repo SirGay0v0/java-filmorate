@@ -1,19 +1,19 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
-
+@Slf4j
 @Service
 public class UserService {
     private final UserStorage storage;
-    private Set<Long> userSet;
-    private Set<Long> friendSet;
 
     @Autowired
     public UserService(UserStorage storage) {
@@ -21,42 +21,59 @@ public class UserService {
     }
 
 
+    @SneakyThrows
     public void makeFriend(long userId, long friendId) {
-        if (storage.getUserById(userId) != null && storage.getUserById(friendId) != null) {
-            userSet = storage.getUserById(userId).getFriendsSet();
-            userSet.add(friendId);
-            storage.getUserById(userId).setFriendsSet(userSet);
+        long count = storage.returnAll().stream()
+                .map(User::getId)
+                .filter(id -> id == userId || id == friendId)
+                .count();
 
-            friendSet = storage.getUserById(friendId).getFriendsSet();
-            friendSet.add(userId);
-            storage.getUserById(friendId).setFriendsSet(friendSet);
-        } else throw new NullPointerException("");
+        if (count == 2) {
+            storage.getUserById(userId).getFriendsSet().add(friendId);
+            storage.getUserById(friendId).getFriendsSet().add(userId);
+
+            log.info("Пользователи с id " + userId + " и " + friendId + " стали друзьями.");
+        } else throw new NotFoundException();
     }
 
 
     public void unfriend(long userId, long friendId) {
-        userSet = storage.getUserById(userId).getFriendsSet();
-        userSet.remove(friendId);
-        storage.getUserById(userId).setFriendsSet(userSet);
+        storage.getUserById(userId).getFriendsSet().remove(friendId);
+        storage.getUserById(friendId).getFriendsSet().remove(userId);
 
-        friendSet = storage.getUserById(friendId).getFriendsSet();
-        friendSet.remove(userId);
-        storage.getUserById(friendId).setFriendsSet(friendSet);
+        log.info("Пользователи с id " + userId + " и " + friendId + " больше не друзья.");
     }
 
-    public Set<User> returnFriendSet(long id) {
-        return storage.getUserById(id).getFriendsSet().stream()
-                .map(storage::getUserById)
-                .collect(Collectors.toSet());
+    public List<User> returnFriendList(long id) {
+        log.info("Возвращен список друзей пользователя с id " + id);
+        return storage.getFriendsList(id);
     }
 
-    public Set<User> getMutualFriendsSet(long userId, long otherId) {
-        userSet = storage.getUserById(userId).getFriendsSet();
-        friendSet = storage.getUserById(otherId).getFriendsSet();
+    public List<User> getMutualFriendsList(long userId, long otherId) {
+        log.info("Возвращен список общих друзей пользователей с id " + userId + " и " + otherId);
+        return storage.getMutualFriendsList(userId, otherId);
+    }
 
-        return userSet.stream()
-                .filter(id -> friendSet.contains(id))
-                .map(storage::getUserById)
-                .collect(Collectors.toSet());
+    public User createUser(User user) {
+        storage.create(user);
+        log.info("Пользователь " + user.getId() + " создан!");
+        return user;
+    }
+
+    public User updateUser(User user) throws NotFoundException {
+        if (storage.update(user) != null) {
+            log.info("Пользователь" + user.getId() + " обновлен");
+            return user;
+        } else throw new NotFoundException();
+    }
+
+    public List<User> getAllUsers() {
+        log.info("Возвращен список всех пользователей");
+        return storage.returnAll();
+    }
+
+    public User getUserById(long id) {
+        log.info("Вовращен пользователь с id " + id);
+        return storage.getUserById(id);
     }
 }

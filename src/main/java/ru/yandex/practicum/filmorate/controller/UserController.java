@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    private void makeFriends(@PathVariable long id, @PathVariable long friendId) {
+    private void makeFriends(@PathVariable long id, @PathVariable long friendId) throws NotFoundException {
         service.makeFriend(id, friendId);
     }
 

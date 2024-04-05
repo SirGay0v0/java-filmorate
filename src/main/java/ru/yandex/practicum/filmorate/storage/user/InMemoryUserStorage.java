@@ -61,4 +61,12 @@ public class InMemoryUserStorage implements UserStorage {
     public User getUserById(long id) {
         return userMap.get(id);
     }
+
+    @Override
+    public long checkForExistingUsers(long userId, long friendId) {
+        return returnAll().stream()
+                .map(User::getId)
+                .filter(id -> id == userId || id == friendId)
+                .count();
+    }
 }

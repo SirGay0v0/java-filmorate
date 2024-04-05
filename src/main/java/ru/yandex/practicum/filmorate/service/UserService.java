@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,14 +20,8 @@ public class UserService {
     }
 
 
-    @SneakyThrows
-    public void makeFriend(long userId, long friendId) {
-        long count = storage.returnAll().stream()
-                .map(User::getId)
-                .filter(id -> id == userId || id == friendId)
-                .count();
-
-        if (count == 2) {
+    public void makeFriend(long userId, long friendId) throws NotFoundException {
+        if (storage.checkForExistingUsers(userId, friendId) == 2) {
             storage.getUserById(userId).getFriendsSet().add(friendId);
             storage.getUserById(friendId).getFriendsSet().add(userId);
 

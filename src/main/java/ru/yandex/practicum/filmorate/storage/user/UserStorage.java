@@ -19,4 +19,6 @@ public interface UserStorage {
     List<User> getFriendsList(long id);
 
     List<User> getMutualFriendsList(long userId, long otherId);
+
+    long checkForExistingUsers(long userId, long friendId);
 }

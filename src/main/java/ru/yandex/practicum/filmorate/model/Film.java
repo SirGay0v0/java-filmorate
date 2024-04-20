@@ -26,6 +26,8 @@ public class Film {
     @Min(1)
     private Long duration;
     private Set<Long> likesUsersSet = new HashSet<>();
+    private Set<Genre> genreSet = new HashSet<>();
+    private Rating rating;
 
     @Override
     public boolean equals(Object o) {

@@ -14,10 +14,11 @@ public class InMemoryUserStorage implements UserStorage {
     private long id = 1;
 
     @Override
-    public void create(User user) {
+    public User create(User user) {
         user.setId(id);
         userMap.put(id, user);
         id++;
+        return user;
     }
 
     @Override
@@ -30,12 +31,12 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void delete(User user) {
-        userMap.remove(user.getId());
+    public void delete(long userId) {
+        userMap.remove(userId);
     }
 
     @Override
-    public List<User> returnAll() {
+    public List<User> getAllUsersList() {
         return userMap.keySet().stream()
                 .map(userMap::get)
                 .collect(Collectors.toList());
@@ -50,7 +51,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> getMutualFriendsList(long userId, long otherId) {
-
         return getUserById(userId).getFriendsSet().stream()
                 .filter(id -> getUserById(otherId).getFriendsSet().contains(id))
                 .map(this::getUserById)
@@ -58,15 +58,18 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(long id) {
-        return userMap.get(id);
+    public User addFriend(Long userId, Long friendId) {
+        userMap.get(userId).getFriendsSet().add(friendId);
+        return userMap.get(userId);
     }
 
     @Override
-    public long checkForExistingUsers(long userId, long friendId) {
-        return returnAll().stream()
-                .map(User::getId)
-                .filter(id -> id == userId || id == friendId)
-                .count();
+    public void deleteFriend(Long userId, Long friendId) {
+        userMap.get(userId).getFriendsSet().remove(friendId);
+    }
+
+    @Override
+    public User getUserById(long id) {
+        return userMap.get(id);
     }
 }

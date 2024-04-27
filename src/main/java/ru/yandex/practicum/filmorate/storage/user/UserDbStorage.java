@@ -38,11 +38,11 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User create(User user) {
-
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(
-                    "INSERT INTO users (email, login, user_name, birthday) VALUES (?, ?, ?, ?)",
+                    "INSERT INTO users (email, login, user_name, birthday) " +
+                            "VALUES (?, ?, ?, ?)",
                     new String[]{"user_id"});
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getLogin());
@@ -56,7 +56,9 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
-        String sqlQuery = "UPDATE users SET email = ?, login = ?, user_name = ?, birthday = ? WHERE user_id = ?";
+        String sqlQuery = "UPDATE users " +
+                "SET email = ?, login = ?, user_name = ?, birthday = ? " +
+                "WHERE user_id = ?";
         jdbcTemplate.update(sqlQuery, user.getEmail(), user.getLogin(),
                 user.getName(), user.getBirthday(), user.getId());
         return user;
@@ -117,10 +119,10 @@ public class UserDbStorage implements UserStorage {
                         "WHERE user_id IN(" +
                         "select friend_id" +
                         "from friends as fr1" +
-                        "where user_id = '1' AND friend_id IN (" +
+                        "where user_id = ? AND friend_id IN (" +
                         "SELECT friend_id " +
                         "FROM friends" +
-                        "WHERE user_id = '2'))");
+                        "WHERE user_id = ?))", userId, otherId);
         while (!userRows.isAfterLast()) {
             userRows.next();
             User user = new User(
@@ -136,7 +138,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User addFriend(Long userId, Long friendId) {
-        String sqlFriends = "INSERT INTO friends (user_id, friend_id)VALUES (?, ?)";
+        String sqlFriends = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
         jdbcTemplate.update(sqlFriends, userId, friendId);
 
         SqlRowSet userRows = jdbcTemplate.queryForRowSet(

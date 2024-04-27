@@ -6,19 +6,21 @@ import java.util.List;
 
 public interface UserStorage {
 
-    void create(User user);
+    User create(User user);
 
     User update(User user);
 
-    void delete(User user);
+    void delete(long userId);
 
     User getUserById(long userId);
 
-    List<User> returnAll();
+    List<User> getAllUsersList();
 
     List<User> getFriendsList(long id);
 
     List<User> getMutualFriendsList(long userId, long otherId);
 
-    long checkForExistingUsers(long userId, long friendId);
+    User addFriend(Long userId, Long friendId);
+
+    void deleteFriend(Long userId, Long friendId);
 }

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -15,25 +16,17 @@ public class UserService {
     private final UserStorage storage;
 
     @Autowired
-    public UserService(UserStorage storage) {
+    public UserService(@Qualifier("inMemoryUserStorage") UserStorage storage) {
         this.storage = storage;
     }
 
-
-    public void makeFriend(long userId, long friendId) throws NotFoundException {
-        if (storage.checkForExistingUsers(userId, friendId) == 2) {
-            storage.getUserById(userId).getFriendsSet().add(friendId);
-            storage.getUserById(friendId).getFriendsSet().add(userId);
-
-            log.info("Пользователи с id " + userId + " и " + friendId + " стали друзьями.");
-        } else throw new NotFoundException();
+    public User addFriend(long userId, long friendId) {
+        log.info("Пользователь с id " + userId + " добавил в друзья пользователя с id " + friendId + " .");
+        return storage.addFriend(userId, friendId);
     }
 
-
-    public void unfriend(long userId, long friendId) {
-        storage.getUserById(userId).getFriendsSet().remove(friendId);
-        storage.getUserById(friendId).getFriendsSet().remove(userId);
-
+    public void deleteFriend(long userId, long friendId) {
+        storage.deleteFriend(userId, friendId);
         log.info("Пользователи с id " + userId + " и " + friendId + " больше не друзья.");
     }
 
@@ -60,9 +53,14 @@ public class UserService {
         } else throw new NotFoundException();
     }
 
-    public List<User> getAllUsers() {
+    public void deleteUser(long id) {
+        storage.delete(id);
+        log.info("Пользователь" + id + " удален.");
+    }
+
+    public List<User> getAllUsersList() {
         log.info("Возвращен список всех пользователей");
-        return storage.returnAll();
+        return storage.getAllUsersList();
     }
 
     public User getUserById(long id) {

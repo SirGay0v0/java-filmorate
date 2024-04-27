@@ -29,9 +29,15 @@ public class UserController {
         return service.updateUser(user);
     }
 
+    @DeleteMapping("/users/{id}")
+    private void deleteUser(@PathVariable long id) {
+        service.deleteUser(id);
+    }
+
+
     @GetMapping("/users")
     private List<User> getUsers() {
-        return service.getAllUsers();
+        return service.getAllUsersList();
     }
 
     @GetMapping("/users/{id}")
@@ -40,13 +46,13 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    private void makeFriends(@PathVariable long id, @PathVariable long friendId) throws NotFoundException {
-        service.makeFriend(id, friendId);
+    private User makeFriends(@PathVariable long id, @PathVariable long friendId) {
+        return service.addFriend(id, friendId);
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")
     private void unfriend(@PathVariable long id, @PathVariable long friendId) {
-        service.unfriend(id, friendId);
+        service.deleteFriend(id, friendId);
     }
 
     @GetMapping("/users/{id}/friends")

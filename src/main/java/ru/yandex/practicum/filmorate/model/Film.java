@@ -29,6 +29,15 @@ public class Film {
     private Set<Genre> genreSet = new HashSet<>();
     private Rating rating;
 
+    public Film(long id, String name, String description, LocalDate releaseDate, Long duration, Rating rating) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.rating = rating;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -23,15 +24,18 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
-    public void addLike(long userId, long filmId) {
-        filmStorage.getFilmById(filmId).getLikesUsersSet().add(userStorage.getUserById(userId).getId());
-        log.info("Пользователь с id " + userId + " поставил лайк фильму с id " + filmId);
+    public void addLike(long userId, long filmId) throws NotFoundException {
+        if (userStorage.getUserById(userId) != null && filmStorage.getFilmById(filmId) != null) {
+            filmStorage.addLike(userId, filmId);
+            log.info("Пользователь с id " + userId + " поставил лайк фильму с id " + filmId);
+        } else throw new NotFoundException();
     }
 
-    public void removeLike(long userId, long filmId) {
-        filmStorage.getFilmById(filmId).getLikesUsersSet().remove(userStorage.getUserById(userId).getId());
-        log.info("Пользователь с id " + userId + " убрал лайк с фильма с id " + filmId);
-
+    public void removeLike(long userId, long filmId) throws NotFoundException {
+        if (userStorage.getUserById(userId) != null && filmStorage.getFilmById(filmId) != null) {
+            filmStorage.removeLike(userId, filmId);
+            log.info("Пользователь с id " + userId + " убрал лайк с фильма с id " + filmId);
+        } else throw new NotFoundException();
     }
 
     public List<Film> getMostLikableFilmsList(int count) {
@@ -41,8 +45,7 @@ public class FilmService {
 
     public Film createFilm(Film film) {
         log.info("Фильм c id " + film.getId() + " создан");
-        filmStorage.create(film);
-        return film;
+        return filmStorage.create(film);
     }
 
     public Film updateFilm(Film film) throws ValidationException {
@@ -54,9 +57,7 @@ public class FilmService {
 
     public List<Film> getListAllFilms() {
         log.info("Возвращен список всех фильмов");
-        return filmStorage.returnAll();
+        return filmStorage.getAllFilmsList();
     }
-
-
 }
 

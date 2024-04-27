@@ -23,6 +23,14 @@ public class User {
     private LocalDate birthday;
     private Set<Long> friendsSet = new HashSet<>();
 
+    public User(long id, String email, String login, String name, LocalDate birthday) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -12,16 +12,15 @@ import java.util.stream.Collectors;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-
-
     private final Map<Long, Film> filmMap = new ConcurrentHashMap<>();
     private long id = 1;
 
     @Override
-    public void create(Film film) {
+    public Film create(Film film) {
         film.setId(id);
         filmMap.put(id, film);
         id++;
+        return film;
     }
 
     @Override
@@ -34,12 +33,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void delete(Film film) {
-        filmMap.remove(film.getId());
+    public void delete(long filmId) {
+        filmMap.remove(filmId);
     }
 
     @Override
-    public List<Film> returnAll() {
+    public List<Film> getAllFilmsList() {
         return new ArrayList<>(filmMap.values());
     }
 
@@ -50,9 +49,19 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getMostLikableFilmSet(int count) {
-        return returnAll().stream()
+        return getAllFilmsList().stream()
                 .sorted(Comparator.comparing(Film::sizeOfLikes).reversed())
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void addLike(long userId, long filmId) {
+        filmMap.get(filmId).getLikesUsersSet().add(userId);
+    }
+
+    @Override
+    public void removeLike(long userId, long filmId) {
+        filmMap.get(filmId).getLikesUsersSet().remove(userId);
     }
 }

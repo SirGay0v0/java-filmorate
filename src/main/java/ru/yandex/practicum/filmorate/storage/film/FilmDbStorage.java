@@ -46,17 +46,21 @@ public class FilmDbStorage implements FilmStorage {
             }
 
             if (film.getGenres() != null) {
+                StringBuilder sql = new StringBuilder("INSERT INTO film_genre (film_id, genre_id) VALUES ");
                 for (Genre genre : film.getGenres()) {
-                    jdbcTemplate.update(
-                            "INSERT INTO film_genre (film_id, genre_id)" +
-                                    "VALUES (?, ?) ",
-                            filmId, genre.getId());
+                    sql.append("(").append(filmId).append(", ").append(genre.getId()).append("), ");
                 }
+                sql.delete(sql.length() - 2, sql.length() - 1).append(";");
+                jdbcTemplate.update(sql.toString());
             }
             if (filmId != null) {
                 return getFilmById(filmId);
-            } else return null;
-        } else return null;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -75,10 +79,12 @@ public class FilmDbStorage implements FilmStorage {
             }
 
             if (film.getGenres() != null) {
+                StringBuilder sql = new StringBuilder("INSERT INTO film_genre (film_id, genre_id) VALUES ");
                 for (Genre genre : film.getGenres()) {
-                    jdbcTemplate.update("INSERT INTO film_genre (film_id, genre_id) " +
-                            "VALUES (?, ?) ", film.getId(), genre.getId());
+                    sql.append("(").append(film.getId()).append(", ").append(genre.getId()).append("), ");
                 }
+                sql.delete(sql.length() - 2, sql.length() - 1).append(";");
+                jdbcTemplate.update(sql.toString());
             }
             return film;
         }
@@ -91,7 +97,9 @@ public class FilmDbStorage implements FilmStorage {
             return jdbcTemplate.queryForObject(
                     "SELECT * FROM films WHERE film_id = ?",
                     filmRowMapper(), filmId);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -101,19 +109,12 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getMostLikableFilmList(int count) {
-        List<Film> list = jdbcTemplate.query(
-                "SELECT * " +
-                        "FROM films AS f1 " +
-                        "Inner join ( " +
-                        "SELECT film_id, COUNT(DISTINCT user_id) AS sorting " +
-                        "FROM likes " +
-                        "GROUP BY film_id  " +
-                        ") AS f2 On f1.film_id=f2.film_id " +
-                        "ORDER BY sorting " +
-                        "LIMIT ?", filmRowMapper(), count);
-
-        list.sort(Comparator.comparing(Film::sizeOfLikes).reversed());
-        return list;
+        return jdbcTemplate.query("SELECT films.*, COUNT(likes.film_id) AS total_likes " +
+                "FROM films " +
+                "LEFT JOIN likes ON films.film_id = likes.film_id " +
+                "GROUP BY films.film_id " +
+                "ORDER BY total_likes DESC " +
+                "LIMIT ?;", filmRowMapper(), count);
 
     }
 
@@ -122,7 +123,9 @@ public class FilmDbStorage implements FilmStorage {
         if (checkFilmForExisting(filmId) && userStorage.checkUserForExisting(userId)) {
             jdbcTemplate.update("INSERT INTO likes (film_id, user_id) VALUES (?, ?)", filmId, userId);
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -132,8 +135,9 @@ public class FilmDbStorage implements FilmStorage {
                     "DELETE FROM likes WHERE film_id = ? AND user_id = ?",
                     filmId, userId);
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
     @Override

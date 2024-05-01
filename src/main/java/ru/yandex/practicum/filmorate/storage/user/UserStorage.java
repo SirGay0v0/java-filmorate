@@ -10,17 +10,19 @@ public interface UserStorage {
 
     User update(User user);
 
-    void delete(long userId);
+    void delete(Long userId);
 
-    User getUserById(long userId);
+    User getUserById(Long userId);
 
     List<User> getAllUsersList();
 
-    List<User> getFriendsList(long id);
+    List<User> getFriendsList(Long id);
 
-    List<User> getMutualFriendsList(long userId, long otherId);
+    List<User> getMutualFriendsList(Long userId, Long otherId);
 
     User addFriend(Long userId, Long friendId);
 
-    void deleteFriend(Long userId, Long friendId);
+    boolean deleteFriend(Long userId, Long friendId);
+
+    boolean checkUserForExisting(Long userId);
 }

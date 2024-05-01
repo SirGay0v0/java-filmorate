@@ -31,7 +31,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void delete(long userId) {
+    public void delete(Long userId) {
         userMap.remove(userId);
     }
 
@@ -43,35 +43,43 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getFriendsList(long id) {
-        return getUserById(id).getFriendsSet().stream()
+    public List<User> getFriendsList(Long id) {
+        return getUserById(id).getFriendsList().stream()
                 .map(userMap::get)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<User> getMutualFriendsList(long userId, long otherId) {
-        return getUserById(userId).getFriendsSet().stream()
-                .filter(id -> getUserById(otherId).getFriendsSet().contains(id))
+    public List<User> getMutualFriendsList(Long userId, Long otherId) {
+        return getUserById(userId).getFriendsList().stream()
+                .filter(id -> getUserById(otherId).getFriendsList().contains(id))
                 .map(this::getUserById)
                 .collect(Collectors.toList());
     }
 
     @Override
     public User addFriend(Long userId, Long friendId) {
-        userMap.get(userId).getFriendsSet().add(friendId);
-        userMap.get(friendId).getFriendsSet().add(userId);
+        userMap.get(userId).getFriendsList().add(friendId);
+        userMap.get(friendId).getFriendsList().add(userId);
         return userMap.get(userId);
     }
 
     @Override
-    public void deleteFriend(Long userId, Long friendId) {
-        userMap.get(userId).getFriendsSet().remove(friendId);
-        userMap.get(friendId).getFriendsSet().remove(userId);
+    public boolean deleteFriend(Long userId, Long friendId) {
+        if (userMap.containsKey(userId) && userMap.containsKey(friendId)) {
+            userMap.get(userId).getFriendsList().remove(friendId);
+            userMap.get(friendId).getFriendsList().remove(userId);
+            return true;
+        } else return false;
     }
 
     @Override
-    public User getUserById(long id) {
+    public boolean checkUserForExisting(Long userId) {
+        return userMap.containsKey(userId);
+    }
+
+    @Override
+    public User getUserById(Long id) {
         return userMap.get(id);
     }
 }

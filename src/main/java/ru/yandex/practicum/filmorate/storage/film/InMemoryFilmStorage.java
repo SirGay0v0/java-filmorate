@@ -25,16 +25,11 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-        if (filmMap.containsKey(film.getId())) {
+        if (checkFilmForExisting(film.getId())) {
             filmMap.remove(film.getId());
             filmMap.put(film.getId(), film);
             return film;
         } else return null;
-    }
-
-    @Override
-    public void delete(long filmId) {
-        filmMap.remove(filmId);
     }
 
     @Override
@@ -44,11 +39,13 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(long id) {
-        return filmMap.get(id);
+        if (checkFilmForExisting(id)) {
+            return filmMap.get(id);
+        } else return null;
     }
 
     @Override
-    public List<Film> getMostLikableFilmSet(int count) {
+    public List<Film> getMostLikableFilmList(int count) {
         return getAllFilmsList().stream()
                 .sorted(Comparator.comparing(Film::sizeOfLikes).reversed())
                 .limit(count)
@@ -56,12 +53,23 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void addLike(long userId, long filmId) {
-        filmMap.get(filmId).getLikesUsersSet().add(userId);
+    public boolean addLike(long userId, long filmId) {
+        if (checkFilmForExisting(filmId)) {
+            filmMap.get(filmId).getLikesUsersSet().add(userId);
+            return true;
+        } else return false;
     }
 
     @Override
-    public void removeLike(long userId, long filmId) {
-        filmMap.get(filmId).getLikesUsersSet().remove(userId);
+    public boolean removeLike(long userId, long filmId) {
+        if (checkFilmForExisting(filmId)) {
+            filmMap.get(filmId).getLikesUsersSet().remove(userId);
+            return true;
+        } else return false;
+    }
+
+    @Override
+    public boolean checkFilmForExisting(long filmId) {
+        return filmMap.containsKey(filmId);
     }
 }

@@ -9,15 +9,15 @@ public interface FilmStorage {
 
     Film update(Film film);
 
-    void delete(long filmId);
-
     List<Film> getAllFilmsList();
 
     Film getFilmById(long id);
 
-    List<Film> getMostLikableFilmSet(int count);
+    List<Film> getMostLikableFilmList(int count);
 
-    void addLike(long userId, long filmId);
+    boolean addLike(long userId, long filmId);
 
-    void removeLike(long userId, long filmId);
+    boolean removeLike(long userId, long filmId);
+
+    boolean checkFilmForExisting(long filmId);
 }

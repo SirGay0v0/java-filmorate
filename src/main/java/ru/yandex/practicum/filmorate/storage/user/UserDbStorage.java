@@ -56,7 +56,9 @@ public class UserDbStorage implements UserStorage {
                             "WHERE user_id = ?",
                     user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
             return user;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -82,7 +84,9 @@ public class UserDbStorage implements UserStorage {
                             "(SELECT DISTINCT friend_id " +
                             "FROM friends " +
                             "WHERE user_id = ?)", userRowMapper(), userId);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -104,7 +108,9 @@ public class UserDbStorage implements UserStorage {
                     "insert into friends (user_id, friend_id) values (?, ?)",
                     userId, friendId);
             return getUserById(userId);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -113,7 +119,9 @@ public class UserDbStorage implements UserStorage {
             jdbcTemplate.update("DELETE FROM friends WHERE user_id = ? AND friend_id = ?",
                     userId, friendId);
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     private List<Long> setFriendsListFromDb(Long id) {
@@ -135,7 +143,7 @@ public class UserDbStorage implements UserStorage {
                         .email(rs.getString("email"))
                         .login(rs.getString("login"))
                         .birthday(rs.getDate("birthday").toLocalDate())
-                        .friendsSet(setFriendsListFromDb(rs.getLong("user_id")))
+                        .friendsList(setFriendsListFromDb(rs.getLong("user_id")))
                         .build()
         );
     }

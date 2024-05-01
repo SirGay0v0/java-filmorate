@@ -6,18 +6,17 @@ import ru.yandex.practicum.filmorate.exceptions.InvalidArgumentsRequestException
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.film.FilmServiceImpl;
+import ru.yandex.practicum.filmorate.service.film.FilmService;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 public class FilmController {
-
-    private final FilmServiceImpl service;
+    private final FilmService service;
 
     @Autowired
-    public FilmController(FilmServiceImpl service) {
+    public FilmController(FilmService service) {
         this.service = service;
     }
 

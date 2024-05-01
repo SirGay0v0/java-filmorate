@@ -29,7 +29,9 @@ public class InMemoryFilmStorage implements FilmStorage {
             filmMap.remove(film.getId());
             filmMap.put(film.getId(), film);
             return film;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -41,7 +43,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film getFilmById(long id) {
         if (checkFilmForExisting(id)) {
             return filmMap.get(id);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -57,7 +61,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (checkFilmForExisting(filmId)) {
             filmMap.get(filmId).getLikesUsersSet().add(userId);
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -65,7 +71,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (checkFilmForExisting(filmId)) {
             filmMap.get(filmId).getLikesUsersSet().remove(userId);
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     @Override

@@ -26,14 +26,18 @@ public class UserServiceImpl implements UserService {
         if (user != null) {
             log.info("Пользователь с id " + userId + " добавил в друзья пользователя с id " + friendId + " .");
             return user;
-        } else throw new NotFoundException();
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @Override
     public void deleteFriend(long userId, long friendId) throws NotFoundException {
         if (storage.deleteFriend(userId, friendId)) {
             log.info("Пользователи с id " + userId + " и " + friendId + " больше не друзья.");
-        } else throw new NotFoundException();
+        } else {
+            throw new NotFoundException();
+        }
 
     }
 
@@ -43,7 +47,9 @@ public class UserServiceImpl implements UserService {
         if (list != null) {
             log.info("Возвращен список друзей пользователя с id " + id);
             return list;
-        } else throw new NotFoundException();
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @Override
@@ -52,7 +58,9 @@ public class UserServiceImpl implements UserService {
         if (list != null) {
             log.info("Возвращен список общих друзей пользователей с id " + userId + " и " + otherId);
             return list;
-        } else throw new NotFoundException();
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @Override
@@ -67,7 +75,9 @@ public class UserServiceImpl implements UserService {
         if (storage.update(user) != null) {
             log.info("Пользователь" + user.getId() + " обновлен");
             return user;
-        } else throw new NotFoundException();
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @Override

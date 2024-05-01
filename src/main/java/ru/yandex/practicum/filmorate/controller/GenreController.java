@@ -6,16 +6,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.service.genre.GenreServiceImpl;
+import ru.yandex.practicum.filmorate.service.genre.GenreService;
 
 import java.util.List;
 
 @RestController
 public class GenreController {
+    private final GenreService service;
 
-    private final GenreServiceImpl service;
-
-    public GenreController(@Qualifier("genreServiceImpl") GenreServiceImpl service) {
+    public GenreController(@Qualifier("genreServiceImpl") GenreService service) {
         this.service = service;
     }
 

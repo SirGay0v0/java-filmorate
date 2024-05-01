@@ -25,7 +25,9 @@ public class GenreDbStorage implements GenreStorage {
                             "FROM genre " +
                             "WHERE genre_id = ?", genreRowMapper(),
                     genreId);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override

@@ -31,7 +31,9 @@ public class FilmServiceImpl implements FilmService {
         if (userStorage.getUserById(userId) != null && filmStorage.getFilmById(filmId) != null) {
             filmStorage.addLike(userId, filmId);
             log.info("Пользователь с id " + userId + " поставил лайк фильму с id " + filmId);
-        } else throw new NotFoundException();
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @Override
@@ -39,7 +41,9 @@ public class FilmServiceImpl implements FilmService {
         if (userStorage.getUserById(userId) != null && filmStorage.getFilmById(filmId) != null) {
             filmStorage.removeLike(userId, filmId);
             log.info("Пользователь с id " + userId + " убрал лайк с фильма с id " + filmId);
-        } else throw new NotFoundException();
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @Override
@@ -54,7 +58,9 @@ public class FilmServiceImpl implements FilmService {
         if (filmCreated != null) {
             log.info("Фильм c id " + filmCreated.getId() + " создан");
             return filmCreated;
-        } else throw new InvalidArgumentsRequestException();
+        } else {
+            throw new InvalidArgumentsRequestException();
+        }
     }
 
     @Override
@@ -62,7 +68,9 @@ public class FilmServiceImpl implements FilmService {
         if (filmStorage.update(film).equals(film)) {
             log.info("Фильм c id " + film.getId() + " обновлен");
             return film;
-        } else throw new ValidationException();
+        } else {
+            throw new ValidationException();
+        }
     }
 
     @Override
@@ -77,7 +85,9 @@ public class FilmServiceImpl implements FilmService {
         if (film != null) {
             log.info("Возвращен фильм с жанром.");
             return film;
-        } else throw new NotFoundException();
+        } else {
+            throw new NotFoundException();
+        }
     }
 }
 

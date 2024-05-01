@@ -27,7 +27,9 @@ public class MpaServiceImpl implements MpaService {
         if (mpa != null) {
             log.info("Возвращен mpa c id " + mpaId);
             return mpa;
-        } else throw new NotFoundException();
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @Override

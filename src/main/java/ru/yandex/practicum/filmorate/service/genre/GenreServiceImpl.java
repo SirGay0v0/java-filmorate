@@ -26,7 +26,9 @@ public class GenreServiceImpl implements GenreService {
         if (genre != null) {
             log.info("Возвращен genre c id " + genreId);
             return genre;
-        } else throw new NotFoundException();
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @Override

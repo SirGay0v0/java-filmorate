@@ -25,7 +25,9 @@ public class MpaDbStorage implements MpaStorage {
                             "FROM mpa " +
                             "WHERE mpa_id = ?", mpaRowMapper(),
                     mpaId);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override

@@ -27,7 +27,9 @@ public class InMemoryUserStorage implements UserStorage {
             userMap.remove(user.getId());
             userMap.put(user.getId(), user);
             return user;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -70,7 +72,9 @@ public class InMemoryUserStorage implements UserStorage {
             userMap.get(userId).getFriendsList().remove(friendId);
             userMap.get(friendId).getFriendsList().remove(userId);
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     @Override

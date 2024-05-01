@@ -14,10 +14,11 @@ public class InMemoryUserStorage implements UserStorage {
     private long id = 1;
 
     @Override
-    public void create(User user) {
+    public User create(User user) {
         user.setId(id);
         userMap.put(id, user);
         id++;
+        return user;
     }
 
     @Override
@@ -26,47 +27,63 @@ public class InMemoryUserStorage implements UserStorage {
             userMap.remove(user.getId());
             userMap.put(user.getId(), user);
             return user;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override
-    public void delete(User user) {
-        userMap.remove(user.getId());
+    public void delete(Long userId) {
+        userMap.remove(userId);
     }
 
     @Override
-    public List<User> returnAll() {
+    public List<User> getAllUsersList() {
         return userMap.keySet().stream()
                 .map(userMap::get)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<User> getFriendsList(long id) {
-        return getUserById(id).getFriendsSet().stream()
+    public List<User> getFriendsList(Long id) {
+        return getUserById(id).getFriendsList().stream()
                 .map(userMap::get)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<User> getMutualFriendsList(long userId, long otherId) {
-
-        return getUserById(userId).getFriendsSet().stream()
-                .filter(id -> getUserById(otherId).getFriendsSet().contains(id))
+    public List<User> getMutualFriendsList(Long userId, Long otherId) {
+        return getUserById(userId).getFriendsList().stream()
+                .filter(id -> getUserById(otherId).getFriendsList().contains(id))
                 .map(this::getUserById)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public User getUserById(long id) {
-        return userMap.get(id);
+    public User addFriend(Long userId, Long friendId) {
+        userMap.get(userId).getFriendsList().add(friendId);
+        userMap.get(friendId).getFriendsList().add(userId);
+        return userMap.get(userId);
     }
 
     @Override
-    public long checkForExistingUsers(long userId, long friendId) {
-        return returnAll().stream()
-                .map(User::getId)
-                .filter(id -> id == userId || id == friendId)
-                .count();
+    public boolean deleteFriend(Long userId, Long friendId) {
+        if (userMap.containsKey(userId) && userMap.containsKey(friendId)) {
+            userMap.get(userId).getFriendsList().remove(friendId);
+            userMap.get(friendId).getFriendsList().remove(userId);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean checkUserForExisting(Long userId) {
+        return userMap.containsKey(userId);
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        return userMap.get(id);
     }
 }

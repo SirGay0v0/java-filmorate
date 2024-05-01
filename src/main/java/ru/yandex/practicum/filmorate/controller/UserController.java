@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -29,9 +29,15 @@ public class UserController {
         return service.updateUser(user);
     }
 
+    @DeleteMapping("/users/{id}")
+    private void deleteUser(@PathVariable long id) {
+        service.deleteUser(id);
+    }
+
+
     @GetMapping("/users")
     private List<User> getUsers() {
-        return service.getAllUsers();
+        return service.getAllUsersList();
     }
 
     @GetMapping("/users/{id}")
@@ -40,22 +46,22 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    private void makeFriends(@PathVariable long id, @PathVariable long friendId) throws NotFoundException {
-        service.makeFriend(id, friendId);
+    private User addFriends(@PathVariable long id, @PathVariable long friendId) throws NotFoundException {
+        return service.addFriend(id, friendId);
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")
-    private void unfriend(@PathVariable long id, @PathVariable long friendId) {
-        service.unfriend(id, friendId);
+    private void unfriend(@PathVariable long id, @PathVariable long friendId) throws NotFoundException {
+        service.deleteFriend(id, friendId);
     }
 
     @GetMapping("/users/{id}/friends")
-    private List<User> getFriendsSet(@PathVariable long id) {
+    private List<User> getFriendsList(@PathVariable long id) throws NotFoundException {
         return service.returnFriendList(id);
     }
 
     @GetMapping("/users/{id}/friends/common/{otherId}")
-    private List<User> getMutualFriendsSet(@PathVariable long id, @PathVariable long otherId) {
+    private List<User> getMutualFriendsList(@PathVariable long id, @PathVariable long otherId) throws NotFoundException {
         return service.getMutualFriendsList(id, otherId);
     }
 }

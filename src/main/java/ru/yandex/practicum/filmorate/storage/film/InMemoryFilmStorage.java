@@ -12,47 +12,72 @@ import java.util.stream.Collectors;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-
-
     private final Map<Long, Film> filmMap = new ConcurrentHashMap<>();
     private long id = 1;
 
     @Override
-    public void create(Film film) {
+    public Film create(Film film) {
         film.setId(id);
         filmMap.put(id, film);
         id++;
+        return film;
     }
 
     @Override
     public Film update(Film film) {
-        if (filmMap.containsKey(film.getId())) {
+        if (checkFilmForExisting(film.getId())) {
             filmMap.remove(film.getId());
             filmMap.put(film.getId(), film);
             return film;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     @Override
-    public void delete(Film film) {
-        filmMap.remove(film.getId());
-    }
-
-    @Override
-    public List<Film> returnAll() {
+    public List<Film> getAllFilmsList() {
         return new ArrayList<>(filmMap.values());
     }
 
     @Override
     public Film getFilmById(long id) {
-        return filmMap.get(id);
+        if (checkFilmForExisting(id)) {
+            return filmMap.get(id);
+        } else {
+            return null;
+        }
     }
 
     @Override
-    public List<Film> getMostLikableFilmSet(int count) {
-        return returnAll().stream()
+    public List<Film> getMostLikableFilmList(int count) {
+        return getAllFilmsList().stream()
                 .sorted(Comparator.comparing(Film::sizeOfLikes).reversed())
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean addLike(long userId, long filmId) {
+        if (checkFilmForExisting(filmId)) {
+            filmMap.get(filmId).getLikesUsersSet().add(userId);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean removeLike(long userId, long filmId) {
+        if (checkFilmForExisting(filmId)) {
+            filmMap.get(filmId).getLikesUsersSet().remove(userId);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean checkFilmForExisting(long filmId) {
+        return filmMap.containsKey(filmId);
     }
 }

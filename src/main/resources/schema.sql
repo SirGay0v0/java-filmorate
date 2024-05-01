@@ -1,3 +1,12 @@
+DROP TABLE IF EXISTS likes;
+DROP TABLE IF EXISTS film_genre;
+DROP TABLE IF EXISTS films;
+DROP TABLE IF EXISTS mpa;
+DROP TABLE IF EXISTS genre;
+DROP TABLE IF EXISTS friends;
+DROP TABLE IF EXISTS users;
+
+
 CREATE TABLE IF NOT EXISTS users(
                       user_id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                       email VARCHAR,
@@ -22,12 +31,12 @@ CREATE TABLE IF NOT EXISTS friends(
 
 CREATE TABLE IF NOT EXISTS genre(
                       genre_id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-                      name VARCHAR);
+                      genre_name VARCHAR);
 
 
-CREATE TABLE IF NOT EXISTS rating(
-                       rating_id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-                       rating_name VARCHAR);
+CREATE TABLE IF NOT EXISTS mpa(
+                       mpa_id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+                       mpa_name VARCHAR);
 
 
 CREATE TABLE IF NOT EXISTS films(
@@ -36,8 +45,8 @@ CREATE TABLE IF NOT EXISTS films(
                       description VARCHAR(200),
                       release_date DATE,
                       duration_min int,
-                      film_rating int,
-                      FOREIGN KEY (film_rating) REFERENCES rating(rating_id),
+                      film_mpa int,
+                      FOREIGN KEY (film_mpa) REFERENCES mpa(mpa_id),
                       CONSTRAINT name_valid CHECK(film_name != ''),
                       CONSTRAINT duration_valid CHECK(duration_min > 0),
                       CONSTRAINT release_date_validator CHECK(release_date > DATE '1895-12-28'));

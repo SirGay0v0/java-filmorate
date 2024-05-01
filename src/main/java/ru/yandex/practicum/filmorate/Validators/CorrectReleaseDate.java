@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {FilmValidator.class})
-public @interface ReleaseDateValidator {
+public @interface CorrectReleaseDate {
     String message() default "{Invalid Film}";
 
     Class<?>[] groups() default {};

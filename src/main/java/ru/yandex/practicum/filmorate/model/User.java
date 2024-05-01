@@ -68,7 +68,7 @@ public class User {
             return this;
         }
 
-        public Builder friendsSet(List<Long> friendsList) {
+        public Builder friendsList(List<Long> friendsList) {
             User.this.friendsList = friendsList;
             return this;
         }

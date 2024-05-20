@@ -1,67 +1,77 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.user.UserService;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
 
-
 @RestController
+@RequestMapping("/users")
+@AllArgsConstructor
 public class UserController {
-    private final UserService service;
 
-    @Autowired
-    public UserController(UserService service) {
-        this.service = service;
+    private UserService userService;
+
+    @PostMapping
+    public User create(@Valid @RequestBody User user) {
+        return userService.create(user);
     }
 
-    @PostMapping("/users")
-    private User createUser(@RequestBody @Valid User user) {
-        return service.createUser(user);
+    @PutMapping
+    public User update(@Valid @RequestBody User user) {
+        return userService.update(user);
     }
 
-    @PutMapping("/users")
-    private User updateUser(@RequestBody @Valid User user) throws NotFoundException {
-        return service.updateUser(user);
+    @GetMapping("/{id}")
+    public User getById(@PathVariable Integer id) {
+        return userService.getById(id);
     }
 
-    @DeleteMapping("/users/{id}")
-    private void deleteUser(@PathVariable long id) {
-        service.deleteUser(id);
+    @GetMapping
+    public List<User> findAll() {
+        return userService.findAll();
     }
 
-
-    @GetMapping("/users")
-    private List<User> getUsers() {
-        return service.getAllUsersList();
+    @PutMapping("/{userId}/friends/{friendId}")
+    public User addFriend(@PathVariable Integer userId,
+                          @PathVariable Integer friendId) {
+        return userService.addFollow(userId, friendId);
     }
 
-    @GetMapping("/users/{id}")
-    private User getUserById(@PathVariable long id) {
-        return service.getUserById(id);
+    @DeleteMapping("/{userId}/friends/{friendId}")
+    public User removeFriend(@PathVariable Integer userId,
+                             @PathVariable Integer friendId) {
+        return userService.removeFollow(userId, friendId);
     }
 
-    @PutMapping("/users/{id}/friends/{friendId}")
-    private User addFriends(@PathVariable long id, @PathVariable long friendId) throws NotFoundException {
-        return service.addFriend(id, friendId);
+    @GetMapping("/{id}/friends")
+    public List<User> findFriends(@PathVariable Integer id) {
+        return userService.getFriends(id);
     }
 
-    @DeleteMapping("/users/{id}/friends/{friendId}")
-    private void unfriend(@PathVariable long id, @PathVariable long friendId) throws NotFoundException {
-        service.deleteFriend(id, friendId);
+    @GetMapping("/{userId}/friends/common/{friendId}")
+    public List<User> findSameFriends(@PathVariable Integer userId,
+                                      @PathVariable Integer friendId) {
+        return userService.getSameFriends(userId, friendId);
     }
 
-    @GetMapping("/users/{id}/friends")
-    private List<User> getFriendsList(@PathVariable long id) throws NotFoundException {
-        return service.returnFriendList(id);
+    @DeleteMapping("/{userId}")
+    public void delUserById(@PathVariable Integer userId) {
+        userService.delUserById(userId);
     }
 
-    @GetMapping("/users/{id}/friends/common/{otherId}")
-    private List<User> getMutualFriendsList(@PathVariable long id, @PathVariable long otherId) throws NotFoundException {
-        return service.getMutualFriendsList(id, otherId);
+    @GetMapping("/{id}/recommendations")
+    public List<Film> recommendFilms(@PathVariable Integer id) {
+        return userService.getRecommendFilms(id);
+    }
+
+    @GetMapping("/{id}/feed")
+    public List<Event> getEventsByUserId(@PathVariable Integer id) {
+        return userService.getEventsByUserId(id);
     }
 }

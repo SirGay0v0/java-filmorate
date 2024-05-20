@@ -1,57 +1,76 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.InvalidArgumentsRequestException;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.film.FilmService;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@RequestMapping("/films")
+@AllArgsConstructor
 public class FilmController {
-    private final FilmService service;
 
-    @Autowired
-    public FilmController(FilmService service) {
-        this.service = service;
+    private FilmService filmService;
+
+    @PostMapping
+    public Film create(@Valid @RequestBody Film film) {
+        return filmService.create(film);
     }
 
-    @PostMapping("/films")
-    private Film createFilm(@RequestBody @Valid Film film) throws InvalidArgumentsRequestException {
-        return service.createFilm(film);
+    @PutMapping
+    public Film update(@Valid @RequestBody Film film) {
+        return filmService.update(film);
     }
 
-    @PutMapping("/films")
-    private Film updateFilm(@RequestBody @Valid Film film) throws ValidationException {
-        return service.updateFilm(film);
+    @GetMapping("{id}")
+    public Film getById(@PathVariable Integer id) {
+        return filmService.getById(id);
     }
 
-    @GetMapping("/films")
-    private List<Film> getFilms() {
-        return service.getListAllFilms();
+    @GetMapping
+    public List<Film> findAll() {
+        return filmService.findAll();
     }
 
-    @PutMapping("/films/{id}/like/{userId}")
-    private void likeFilm(@PathVariable long id, @PathVariable long userId) throws NotFoundException {
-        service.addLike(userId, id);
+    @PutMapping("/{filmId}/like/{userId}")
+    public Film addLike(@PathVariable int filmId,
+                        @PathVariable int userId) {
+        return filmService.addLike(filmId, userId);
     }
 
-    @DeleteMapping("/films/{id}/like/{userId}")
-    private void removeLike(@PathVariable long id, @PathVariable long userId) throws NotFoundException {
-        service.removeLike(userId, id);
+    @DeleteMapping("/{filmId}/like/{userId}")
+    public Film removeLike(@PathVariable int filmId,
+                           @PathVariable int userId) {
+        return filmService.removeLike(filmId, userId);
     }
 
-    @GetMapping("/films/popular")
-    private List<Film> getMostLikableFilms(@RequestParam(defaultValue = "10") String count) {
-        return service.getMostLikableFilmsList(Integer.parseInt(count));
+    @GetMapping("popular") //Если значение параметра count не задано, верните первые 10.
+    public List<Film> findTopPopularFilms(@RequestParam(required = false, defaultValue = "10") int count,
+                                          @RequestParam(required = false, defaultValue = "0") int genreId,
+                                          @RequestParam(required = false, defaultValue = "0") int year) {
+        return filmService.getTopPopularFilms(count, genreId, year);
     }
 
-    @GetMapping("/films/{id}")
-    private Film getFilmWithGenre(@PathVariable int id) throws NotFoundException {
-        return service.getFilmById(id);
+    @GetMapping("/director/{directorId}")
+    public List<Film> findDirectorsFilms(@PathVariable Integer directorId, @RequestParam String sortBy) {
+        return filmService.getFilmsByDirector(directorId, sortBy);
+    }
+
+    @GetMapping("/search")
+    public List<Film> searchByString(@RequestParam String query, @RequestParam String by) {
+        return filmService.getFilmsByDirectorOrTitleByQuery(query, by);
+    }
+
+    @DeleteMapping("/{filmId}")
+    public void delFilmById(@PathVariable Integer filmId) {
+        filmService.delFilmById(filmId);
+    }
+
+    @GetMapping("common")
+    public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
+        return filmService.getCommonFilms(userId, friendId);
     }
 }
